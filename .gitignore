@@ -3,3 +3,5 @@ newstuff/
 *.py~
 *.py.un~
 */build/
+.gitignore~
+.gitignore.un~
