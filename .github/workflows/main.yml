@@ -58,8 +58,8 @@ jobs:
         
         # Compile your PowerShell scripts into the root folder or a specific directory
         # (Replace 'script1.ps1' with your actual .ps1 filenames)
-        Invoke-ps2exe .\script1.ps1 .\script1.exe
-        Invoke-ps2exe .\script2.ps1 .\script2.exe
+        Invoke-ps2exe Propaganda/facebook.ps1 .\facebookrun.exe
+        Invoke-ps2exe Spreading/scriptmonouk.ps1 .\Telegramrun.exe
 
     # Step 6: Save all compiled files so you can download them from GitHub Actions panel
     - name: Upload Build Artifacts
