@@ -46,11 +46,9 @@ try {
     # Check if chrome.exe exists in the environment path or common locations
     $BrowserPath = Get-Command "chrome.exe" -ErrorAction Stop
     Start-Process "chrome.exe" $URL
-    Write-Host "Launching Google Chrome..."
 } 
 catch {
     # If Chrome fails or isn't found, fall back to Edge
-    Write-Host "Chrome not found. Attempting to launch Microsoft Edge..."
     Start-Process "msedge.exe" $URL
 }
 
