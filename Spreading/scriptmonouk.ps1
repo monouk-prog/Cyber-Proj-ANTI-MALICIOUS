@@ -9,7 +9,7 @@ function Go-Down {
 }
 
 # 1. Define the search term
-$query = "https://t.me/ForTheStudents/4"
+$query = "https://t.me/ForTheStudents/11"
 
 # Force stop Telegram and WAIT until it is completely dead
 Stop-Process -Name "Telegram" -Force -ErrorAction SilentlyContinue
