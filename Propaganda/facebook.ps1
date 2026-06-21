@@ -82,10 +82,11 @@ $postbutton = $maxmx/2
 Start-Sleep -Seconds 3
 
 # Automated Navigation
-$wshell.SendKeys("Beautiful Day")
+$wshell.SendKeys("https://www.facebook.com/100089462335127/posts/pfbid0dJV9cdjedwg1zjQbVgRHUobfv7ZLGH2GZ6339ZbvYmRteCXut1cqhXRfi5m7BYXFl/?mibextid=wwXIfr")
 for ($i = 1; $i -le 10; $i++) {
 	$wshell.SendKeys("{TAB}")
 }
+Start-Sleep 3
 $wshell.SendKeys("{ENTER}")
 Start-Sleep 3
 for ($i = 1; $i -le 8; $i++) {
