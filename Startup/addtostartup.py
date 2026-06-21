@@ -15,7 +15,7 @@ else:
 # ──────────────────────────────────────────────────────────────────────────────
 
 # Configuration Parameters
-DOWNLOAD_URL = "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/download/v1.0.17/main.exe"  # Replace with your actual URL
+DOWNLOAD_URL = "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/latest/download/main.exe"  # Replace with your actual URL
 FILENAME = "monoukfile.exe"
 SHORTCUT_NAME = "monoukfile.exe"
 BAT_SOURCE_PATH = os.path.join(SCRIPT_DIR, FILENAME)
