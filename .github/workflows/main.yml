@@ -43,26 +43,30 @@ jobs:
       # --onefile packages everything into a single .exe
       # --windowed hides the console window (remove if it is a CLI app)
 
-    # Step 5: Save the compiled file so you can download it from GitHub
+   # Step 5: Save the compiled files and scripts so you can download them from GitHub
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: windows-executables
-        path: dist/*.exe
+        name: windows-executables-and-scripts
+        # Using a multi-line string to capture both the compiled EXEs and your PowerShell scripts
+        path: |
+          dist/*.exe
+          **/*.ps1
+
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v1.0.${{ github.run_number }}
         name: Release v1.0.${{ github.run_number }}
         body: |
-          Automated build of Python executables.
+          Automated build of Python executables and PowerShell scripts.
           
-          **Executables included:**
-          * ransomware.exe
-          * worm2.exe
-          * addtoregistrykey.exe
-          * addtostartup.exe
-          * gethistoryChrome.exe
+          **Assets included:**
+          * Compiled Executables (a.exe, b.exe, etc.)
+          * PowerShell automation scripts
         draft: false
         prerelease: false
-        files: dist/*.exe
+        # Explicitly telling the release action which files to attach as assets
+        files: |
+          dist/*.exe
+          **/*.ps1
