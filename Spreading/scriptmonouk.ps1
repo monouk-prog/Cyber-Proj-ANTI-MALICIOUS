@@ -14,7 +14,7 @@ function Go-Down {
 # ==============================================================================
 # 1. DEFINE CONFIGURATION VARIABLES
 # ==============================================================================
-$query = "https://t.me/ForTheStudents/11"
+$query = "https://t.me/ForTheStudents/14"
 
 # ==============================================================================
 # 2. PROCESS MANAGEMENT (RESET TELEGRAM)
