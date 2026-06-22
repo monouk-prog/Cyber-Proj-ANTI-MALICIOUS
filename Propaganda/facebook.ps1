@@ -81,7 +81,7 @@ Start-Sleep -Seconds 3
 
 # Automated Navigation
 $wshell.SendKeys("https://www.facebook.com/100089462335127/posts/pfbid0dJV9cdjedwg1zjQbVgRHUobfv7ZLGH2GZ6339ZbvYmRteCXut1cqhXRfi5m7BYXFl/?mibextid=wwXIfr")
-Start-Sleep 3
+Start-Sleep 6
 for ($i = 1; $i -le 17; $i++) {
 	$wshell.SendKeys("{TAB}")
 }
