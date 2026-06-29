@@ -64,7 +64,7 @@ Start-Sleep -Seconds 6
 [KeyBoard]::MaximizeWindow()
 [KeyBoard]::MaximizeWindow()
 [KeyBoard]::MaximizeWindow()
-$wshell.SendKeys("^0")
+#$wshell.SendKeys("^0")
 
 # Get max position for mouse
 [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(8000,205)
